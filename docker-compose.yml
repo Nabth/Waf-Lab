@@ -1,0 +1,32 @@
+services:
+  juice-shop:
+    image: bkimminich/juice-shop:latest
+    container_name: juice-shop
+    restart: unless-stopped
+    networks:
+      - waf-lab
+
+  coraza-waf:
+    image: ghcr.io/coreruleset/coraza-crs:caddy-alpine
+    container_name: coraza-waf
+    restart: unless-stopped
+    depends_on:
+      - juice-shop
+    ports:
+      - "8080:8080"   # Caddy по умолчанию слушает 8080
+    environment:
+      - BACKEND=juice-shop:3000
+      - CORAZA_RULE_ENGINE=On
+      - CORAZA_REQ_BODY_ACCESS=On
+      - CORAZA_AUDIT_ENGINE=On
+      - CORAZA_AUDIT_LOG=/var/log/coraza/audit.log
+      - CORAZA_AUDIT_LOG_FORMAT=JSON
+      - PARANOIA=1
+    volumes:
+      - ./logs:/var/log/coraza
+    networks:
+      - waf-lab
+
+networks:
+  waf-lab:
+    driver: bridge
