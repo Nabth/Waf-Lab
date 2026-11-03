@@ -25,7 +25,7 @@ services:
     volumes:
       - ./logs:/var/log/coraza
       # Добавляем монтирование кастомных правил
-      - ./coraza-rules/exclusions.conf:/opt/coraza/config.d/exclusions.conf:ro
+      # - ./coraza-rules/exclusions.conf:/opt/coraza/config.d/exclusions.conf:ro
     networks:
       - waf-lab
 
